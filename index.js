@@ -1,3 +1,4 @@
+const { Socket } = require('dgram');
 let express = require('express');
 let app = express();
 
@@ -5,6 +6,16 @@ let app = express();
 let http = require('http');
 let server = http.createServer(app);
 
+let io = require('socket.io');
+io = new io.Server(server);
+
+io.on('connection', (socket) => {
+console.log('유저 연결됨');
+socket.on('msg', data => {
+  //다른 소켓들에게 이. 메세지라는 신호를 보낸다
+  io.emit('message', data);
+})
+});
 //public 폴더 내에 있는 css와 js에 접근할 수 있도록 static 미들웨어 설정
 app.use(express.static('public'));
 
